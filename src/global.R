@@ -9,9 +9,9 @@ library(plotly)
 
 ## Data
 ### currency conversion
-currency <- read_csv("../data/currency.csv")
+currency <- read_csv("./data/currency.csv")
 ### Farm gate prices
-farmGate_usa <- read_csv("../data/C8C030A0-BB15-3944-8CBC-6A343D47B6F0.csv") %>%
+farmGate_usa <- read_csv("./data/C8C030A0-BB15-3944-8CBC-6A343D47B6F0.csv") %>%
     filter(Period != "MARKETING YEAR" & `Geo Level` == "NATIONAL" &
            Period != "YEAR") %>%
     mutate(time = parse_date_time(paste(as.character(Year), Period,
@@ -20,12 +20,12 @@ farmGate_usa <- read_csv("../data/C8C030A0-BB15-3944-8CBC-6A343D47B6F0.csv") %>%
     arrange(time)
 farmGate_usa <- merge(farmGate_usa, currency, by.x = "Year", by.y = "year") %>%
     mutate(price = Value * CAD_per_USD / 44.0242)  # USD to CAD and cwt to litre
-farmGate_can <- read_csv2("../data/can_milk_price_farm_gate.csv") %>%
+farmGate_can <- read_csv2("./data/can_milk_price_farm_gate.csv") %>%
     mutate(country = "Canada",
            time = parse_date_time(paste(as.character(year), month, sep = "-"), "ym"),
            price = price / 100) %>%  # from hl to l
     arrange(time)
-farmGate_nze <- read_csv2("../data/nz_milk_price_farm_gate.csv") %>%
+farmGate_nze <- read_csv2("./data/nz_milk_price_farm_gate.csv") %>%
     gather("Yr_2010":"Yr_2018", key = "year", value = "price") %>%
     mutate(year = str_extract(year, "[0-9]+"),
            country = "New Zealand",
@@ -33,9 +33,9 @@ farmGate_nze <- read_csv2("../data/nz_milk_price_farm_gate.csv") %>%
            price = price * 0.9708737864 / 100)  # from 100 kg to l
 farmGate_nze <- merge(farmGate_nze, currency, by = "year") %>%
     mutate(price = price * CAD_per_NZD)
-farmGate_eur <- read_xls("../data/eu_farmgate_milk_prices_-_dg_agri.xls",
+farmGate_eur <- read_xls("./data/eu_farmgate_milk_prices_-_dg_agri.xls",
                          sheet = 2, range = "CT10:HA55")
-eur <- read_xls("../data/eu_farmgate_milk_prices_-_dg_agri.xls",
+eur <- read_xls("./data/eu_farmgate_milk_prices_-_dg_agri.xls",
                 sheet = 2, range = "A10:A55")
 farmGate_eur <- cbind(eur, farmGate_eur)
 names(farmGate_eur) <- c("country", "2009-JAN", "2009-FEB", "2009-MAR", "2009-APR",
@@ -77,16 +77,16 @@ farm_gate <- rbind(farm_gate, farmGate_eur[, c("time", "country", "price")]) %>%
     arrange(time)
 
 ### Retail prices
-retail_us12 <- read_xls("../data/us_milk_retail_2012.xls",
+retail_us12 <- read_xls("./data/us_milk_retail_2012.xls",
                 sheet = 1) %>%
     filter(`Pack Size` == "HALF G")
-retail_us14 <- read_xls("../data/us_milk_retail_2014.xls",
+retail_us14 <- read_xls("./data/us_milk_retail_2014.xls",
                 sheet = 1) %>%
     filter(`Pack Size` == "HALF G")
-retail_us16 <- read_xls("../data/us_milk_retail_2016.xls",
+retail_us16 <- read_xls("./data/us_milk_retail_2016.xls",
                 sheet = 1) %>%
     filter(`Pack Size` == "HALF G")
-retail_us18 <- read_xls("../data/us_milk_retail_2018.xls",
+retail_us18 <- read_xls("./data/us_milk_retail_2018.xls",
                 sheet = 1) %>%
     filter(`Pack Size` == "HALF G")
 retail_us <- do.call("rbind", list(retail_us12, retail_us14, retail_us16, retail_us18))
@@ -98,16 +98,16 @@ retail_us <- merge(retail_us, currency, by = "year") %>%
     mutate(price = price * CAD_per_USD,
            country = "USA") %>%
     arrange(time)
-retail_can <- read_csv("../data/1810000201-eng.csv", skip = 6, n_max = 2) %>%
+retail_can <- read_csv("./data/1810000201-eng.csv", skip = 6, n_max = 2) %>%
     gather("January 2009":"April 2018", key = "year", value = "price") %>%
     filter(Products == "Partly skimmed milk, 1 litre") %>% 
     mutate(country = "Canada",
            time = parse_date_time(year, "my")) %>% 
     arrange(time)
-retail_eu12 <- read_csv("../data/prc_dap12_1_Data.csv", na = ":")
-retail_eu13 <- read_csv("../data/prc_dap13_1_Data.csv", na = ":")
-retail_eu14 <- read_csv("../data/prc_dap14_1_Data.csv", na = ":")
-retail_eu15 <- read_csv("../data/prc_dap15_1_Data.csv", na = ":")
+retail_eu12 <- read_csv("./data/prc_dap12_1_Data.csv", na = ":")
+retail_eu13 <- read_csv("./data/prc_dap13_1_Data.csv", na = ":")
+retail_eu14 <- read_csv("./data/prc_dap14_1_Data.csv", na = ":")
+retail_eu15 <- read_csv("./data/prc_dap15_1_Data.csv", na = ":")
 retail_eu <- do.call("rbind", list(retail_eu12, retail_eu13, retail_eu14,
                                    retail_eu15))
 retail_eu <- merge(retail_eu, currency, by.x = "TIME", by.y = "year")

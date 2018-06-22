@@ -24,8 +24,10 @@ shinyUI(navbarPage(
                  tags$style(type="text/css",
                             ".shiny-output-error { visibility: hidden; }",
                             ".shiny-output-error:before { visibility: hidden; }"),
-                 fluidRow(
-                     plotlyOutput("price_plot"))
+                 fluidRow(withSpinner(
+                     plotlyOutput("price_plot")
+                 )
+                 )
              )
              )
 )

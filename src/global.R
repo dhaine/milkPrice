@@ -1,11 +1,13 @@
 ## Load packages -----------------------------------------------------
 library(shiny)
 library(shinythemes)
+library(shinycssloaders)
 library(tidyverse)
 library(readxl)
 library(lubridate)
 library(zoo)
 library(plotly)
+options(spinner.color="#d9230f")
 
 ## Data
 ### currency conversion

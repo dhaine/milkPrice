@@ -75,3 +75,48 @@ farm_gate <- rbind(farmGate_usa[, c("time", "country", "price")],
 farm_gate <- rbind(farm_gate, farmGate_nze[, c("time", "country", "price")])
 farm_gate <- rbind(farm_gate, farmGate_eur[, c("time", "country", "price")]) %>%
     arrange(time)
+
+### Retail prices
+retail_us12 <- read_xls("../data/us_milk_retail_2012.xls",
+                sheet = 1) %>%
+    filter(`Pack Size` == "HALF G")
+retail_us14 <- read_xls("../data/us_milk_retail_2014.xls",
+                sheet = 1) %>%
+    filter(`Pack Size` == "HALF G")
+retail_us16 <- read_xls("../data/us_milk_retail_2016.xls",
+                sheet = 1) %>%
+    filter(`Pack Size` == "HALF G")
+retail_us18 <- read_xls("../data/us_milk_retail_2018.xls",
+                sheet = 1) %>%
+    filter(`Pack Size` == "HALF G")
+retail_us <- do.call("rbind", list(retail_us12, retail_us14, retail_us16, retail_us18))
+retail_us <- retail_us %>%
+    mutate(time = mdy(Date),
+           year = year(time),
+           price = as.numeric(`Weighted Avg Price`) / 1.89270589)
+retail_us <- merge(retail_us, currency, by = "year") %>%
+    mutate(price = price * CAD_per_USD,
+           country = "USA") %>%
+    arrange(time)
+retail_can <- read_csv("../data/1810000201-eng.csv", skip = 6, n_max = 2) %>%
+    gather("January 2009":"April 2018", key = "year", value = "price") %>%
+    filter(Products == "Partly skimmed milk, 1 litre") %>% 
+    mutate(country = "Canada",
+           time = parse_date_time(year, "my")) %>% 
+    arrange(time)
+retail_eu12 <- read_csv("../data/prc_dap12_1_Data.csv", na = ":")
+retail_eu13 <- read_csv("../data/prc_dap13_1_Data.csv", na = ":")
+retail_eu14 <- read_csv("../data/prc_dap14_1_Data.csv", na = ":")
+retail_eu15 <- read_csv("../data/prc_dap15_1_Data.csv", na = ":")
+retail_eu <- do.call("rbind", list(retail_eu12, retail_eu13, retail_eu14,
+                                   retail_eu15))
+retail_eu <- merge(retail_eu, currency, by.x = "TIME", by.y = "year")
+retail_eu <- retail_eu %>%
+    mutate(time = parse_date_time(paste(TIME, "JUL", sep = "-"), "ym"),
+           price = Value * CAD_per_EUR,
+           country = GEO) %>%
+    filter(UNIT == "Euro" & !is.na(price))
+retail <- do.call("rbind", list(retail_us[, c("time", "price", "country")],
+                                retail_can[, c("time", "price", "country")],
+                                retail_eu[, c("time", "price", "country")])) %>%
+    arrange(time)

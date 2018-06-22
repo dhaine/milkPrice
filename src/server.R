@@ -52,18 +52,4 @@ shinyServer(function(input, output, session){
                    yaxis = list(title = "CAD/litre"),
                    title = plotTitle())
     })
-#    plotInput <- reactive({
-#        p <- farmGate_usa %>%
-#            ggplot() +
-#            geom_line(aes(x = ))
-#    })
-       
-## Output ##############################################################
-########################################################################
-#    output$downloadPlot <- downloadHandler(
-#        filename = function() {paste(input$risk_type, '.png', sep = '')},
-#        content = function(file) {
-#            ggsave(file, plot = plotInput(), width = 8, height = 6, dpi = 300,
-#                   bg = "transparent", device = "png")
-#        })
 })

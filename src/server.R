@@ -47,7 +47,7 @@ shinyServer(function(input, output, session){
                                 ticks = "outside",
                                 tickmode = "array",
                                 tickvals = dat()$time,
-                                tickangle = 0,
+                                tickangle = 45,
                                 title = ""),
                    yaxis = list(title = "CAD/litre"),
                    title = plotTitle())
